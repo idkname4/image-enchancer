@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 
 export type EnhancementMethod = {
-  id: "original" | "grayscale" | "low-pass" | "gamma" | "histogram";
+  id: "original" | "grayscale" | "low-pass" | "gamma" | "histogram" | "sharpen";
   name: string;
   description: string;
   icon: ComponentType<{ className?: string }>;

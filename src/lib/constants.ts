@@ -1,5 +1,5 @@
 import type { EnhancementMethod } from "@/lib/definitions";
-import { Contrast, BarChartHorizontalBig, Image as ImageIcon } from "lucide-react";
+import { Contrast, BarChartHorizontalBig, Image as ImageIcon, Aperture } from "lucide-react";
 import { GrayscaleIcon } from "@/components/icons/grayscale-icon";
 import { BlurIcon } from "@/components/icons/blur-icon";
 
@@ -23,6 +23,13 @@ export const ENHANCEMENT_METHODS: EnhancementMethod[] = [
     description:
       "Applies a blur filter to smoothen the image and reduce noise by averaging pixel values in a neighborhood.",
     icon: BlurIcon,
+  },
+  {
+    id: "sharpen",
+    name: "Sharpen",
+    description:
+      "Increases the contrast between adjacent pixels to make the image appear sharper and more detailed.",
+    icon: Aperture,
   },
   {
     id: "gamma",

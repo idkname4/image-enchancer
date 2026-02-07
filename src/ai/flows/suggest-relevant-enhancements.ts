@@ -37,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'suggestRelevantEnhancementsPrompt',
   input: {schema: SuggestRelevantEnhancementsInputSchema},
   output: {schema: SuggestRelevantEnhancementsOutputSchema},
-  prompt: `You are an expert image enhancement advisor. Analyze the provided image and suggest the most relevant enhancement methods from the following list: Grayscale, Low-pass, Gamma Correction, Histogram Equalization.
+  prompt: `You are an expert image enhancement advisor. Analyze the provided image and suggest the most relevant enhancement methods from the following list: Grayscale, Low-pass, Sharpen, Gamma Correction, Histogram Equalization.
 
   Return a list of the names of the methods that are most relevant to improving the image quality.  Only return methods from the provided list.
 
