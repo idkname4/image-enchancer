@@ -95,49 +95,6 @@ function applyLowPass(imageData: ImageData): ImageData {
   return new ImageData(new_data, width, height);
 }
 
-function applySharpen(imageData: ImageData): ImageData {
-  const { data, width, height } = imageData;
-  const new_data = new Uint8ClampedArray(data.length);
-  // Sharpening kernel
-  const kernel = [
-    [0, -1, 0],
-    [-1, 5, -1],
-    [0, -1, 0],
-  ];
-  const kernel_size = 3;
-  const half_kernel = Math.floor(kernel_size / 2);
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      let r_sum = 0,
-        g_sum = 0,
-        b_sum = 0;
-
-      for (let ky = -half_kernel; ky <= half_kernel; ky++) {
-        for (let kx = -half_kernel; kx <= half_kernel; kx++) {
-          const px = x + kx;
-          const py = y + ky;
-
-          if (px >= 0 && px < width && py >= 0 && py < height) {
-            const index = (py * width + px) * 4;
-            const weight = kernel[ky + half_kernel][kx + half_kernel];
-            r_sum += data[index] * weight;
-            g_sum += data[index + 1] * weight;
-            b_sum += data[index + 2] * weight;
-          }
-        }
-      }
-
-      const index = (y * width + x) * 4;
-      new_data[index] = Math.max(0, Math.min(255, r_sum));
-      new_data[index + 1] = Math.max(0, Math.min(255, g_sum));
-      new_data[index + 2] = Math.max(0, Math.min(255, b_sum));
-      new_data[index + 3] = data[index + 3];
-    }
-  }
-  return new ImageData(new_data, width, height);
-}
-
 function applyGammaCorrection(imageData: ImageData, gamma = 2.2): ImageData {
   const data = imageData.data;
   const gamma_inv = 1 / gamma;
@@ -195,7 +152,7 @@ function applyHistogramEqualization(imageData: ImageData): ImageData {
 
 
 type EnhancementResult = {
-  id: "grayscale" | "low-pass" | "gamma" | "histogram" | "sharpen";
+  id: "grayscale" | "low-pass" | "gamma" | "histogram";
   dataUrl: string;
 };
 
@@ -215,7 +172,7 @@ export async function processImage(src: string): Promise<EnhancementResult[]> {
   if (!ctx) throw new Error("Could not get canvas context");
   ctx.drawImage(image, 0, 0);
 
-  const enhancementsToApply = ["grayscale", "low-pass", "gamma", "histogram", "sharpen"] as const;
+  const enhancementsToApply = ["grayscale", "low-pass", "gamma", "histogram"] as const;
 
   const results: EnhancementResult[] = [];
 
@@ -235,9 +192,6 @@ export async function processImage(src: string): Promise<EnhancementResult[]> {
         break;
       case "histogram":
         enhancedImageData = applyHistogramEqualization(originalImageData);
-        break;
-      case "sharpen":
-        enhancedImageData = applySharpen(originalImageData);
         break;
     }
 

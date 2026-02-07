@@ -2,6 +2,7 @@
 
 import { explainEnhancementRecommendation } from "@/ai/flows/explain-enhancement-recommendations";
 import { suggestRelevantEnhancements } from "@/ai/flows/suggest-relevant-enhancements";
+import { enhanceImage } from "@/ai/flows/enhance-image";
 
 type AISuggestion = {
   name: string;
@@ -49,5 +50,18 @@ export async function getAISuggestions(
   } catch (error) {
     console.error("Error getting AI suggestions:", error);
     return [];
+  }
+}
+
+export async function getAISharpenedImage(photoDataUri: string): Promise<string | null> {
+  try {
+    const result = await enhanceImage({
+      photoDataUri,
+      enhancementType: "sharpen",
+    });
+    return result.enhancedPhotoDataUri;
+  } catch (error) {
+    console.error("Error getting AI sharpened image:", error);
+    return null;
   }
 }

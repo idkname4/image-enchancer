@@ -2,7 +2,7 @@
 
 import { useState, useReducer, useRef, useEffect, useTransition } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { getAISuggestions } from "@/lib/actions";
+import { getAISuggestions, getAISharpenedImage } from "@/lib/actions";
 import { processImage } from "@/lib/image-processor";
 import { ENHANCEMENT_METHODS } from "@/lib/constants";
 import type { ProcessedImage } from "@/lib/definitions";
@@ -128,31 +128,32 @@ export default function ImageEnhanceClient() {
       const runEnhancements = async () => {
         dispatch({ type: "SET_IS_PROCESSING", payload: true });
 
-        const [processedResults, aiSuggestions] = await Promise.all([
+        const [processedResults, aiSuggestions, aiSharpenedResult] = await Promise.all([
           processImage(state.originalImage!.src),
-          state.useAISuggestions ? getAISuggestions(state.originalImage!.src) : Promise.resolve([])
+          state.useAISuggestions ? getAISuggestions(state.originalImage!.src) : Promise.resolve([]),
+          getAISharpenedImage(state.originalImage!.src)
         ]);
 
         const finalImages: ProcessedImage[] = ENHANCEMENT_METHODS.map(method => {
-          if (method.id === "original") {
-            return {
-              id: "original",
-              name: "Original",
-              src: state.originalImage!.src,
-              description: method.description,
-              icon: method.icon,
-            };
-          }
-          const result = processedResults.find(r => r.id === method.id);
           const aiSuggestion = aiSuggestions.find(s => s.name.toLowerCase().includes(method.name.toLowerCase()));
           
+          let imageSrc = "";
+          if (method.id === "original") {
+              imageSrc = state.originalImage!.src;
+          } else if (method.id === "sharpen") {
+              imageSrc = aiSharpenedResult || state.originalImage!.src;
+          } else {
+              const clientResult = processedResults.find(r => r.id === method.id);
+              imageSrc = clientResult?.dataUrl || "";
+          }
+
           return {
-            id: method.id,
-            name: method.name,
-            src: result?.dataUrl || "",
-            description: aiSuggestion?.explanation || method.description,
-            icon: method.icon,
-            isRecommended: !!aiSuggestion
+              id: method.id,
+              name: method.name,
+              src: imageSrc,
+              description: aiSuggestion?.explanation || method.description,
+              icon: method.icon,
+              isRecommended: !!aiSuggestion
           };
         });
 
