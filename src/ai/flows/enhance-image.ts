@@ -38,11 +38,17 @@ const enhanceImageFlow = ai.defineFlow(
     outputSchema: EnhanceImageOutputSchema,
   },
   async (input) => {
+    let enhancementPrompt = `Please don't add any text to your response. Apply a professional '${input.enhancementType}' effect to this image to improve its quality, clarity, and detail.`;
+
+    if (input.enhancementType.toLowerCase() === 'sharpen') {
+        enhancementPrompt = `You are an expert photo restoration specialist. A user has provided a blurry image and wants it to be 'much more and more clear'. Your task is to apply an advanced, professional-grade sharpening and deblurring process. Increase the clarity, remove motion blur and compression artifacts, and enhance fine details to their maximum possible level without introducing unnatural artifacts. The final result should be exceptionally crisp and clear. Do not add any text to your response.`;
+    }
+
     const { media } = await ai.generate({
         model: 'googleai/gemini-2.5-flash-image-preview',
         prompt: [
             { media: { url: input.photoDataUri } },
-            { text: `Please don't add any text to your response. Apply a professional '${input.enhancementType}' effect to this image to improve its quality, clarity, and detail.` },
+            { text: enhancementPrompt },
         ],
         config: {
             responseModalities: ['TEXT', 'IMAGE'],
