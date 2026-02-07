@@ -1,5 +1,7 @@
-# Firebase Studio
+the idea is simple
 
-This is a NextJS starter in Firebase Studio.
+my techer is teching us about the different types of image enchancment in matlab 
 
-To get started, take a look at src/app/page.tsx.
+like grey scale , gamma correction inverse fft 
+
+and manhy more
